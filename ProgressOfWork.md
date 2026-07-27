@@ -10,3 +10,6 @@
 - [x] Создан файл `requirements.txt`
 - [x] Создан файл `README.md` — инструкция по запуску
 - [x] Создан файл `ProgressOfWork.md` — этот файл
+- [x] Создан файл `Dockerfile` — образ на базе nginx:alpine
+- [x] Обновлён `.gitignore` — добавлены Docker-исключения
+- [x] Обновлён `README.md` — добавлены инструкции по Docker
