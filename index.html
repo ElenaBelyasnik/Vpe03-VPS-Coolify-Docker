@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Камень, Ножницы, Бумага</title>
+    <style>
+        /* ===== Базовые стили ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a2e;
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* ===== Заголовок ===== */
+        h1 {
+            font-size: 2.4rem;
+            margin-bottom: 30px;
+            color: #e94560;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(233, 69, 96, 0.3);
+        }
+
+        /* ===== Счётчик очков ===== */
+        .scoreboard {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 30px;
+            background-color: #16213e;
+            padding: 20px 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .score-item {
+            text-align: center;
+        }
+
+        .score-item .label {
+            font-size: 0.9rem;
+            color: #a0a0b0;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .score-item .value {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        .player-score .value {
+            color: #0f3460;
+            color: #4ecca3;
+        }
+
+        .computer-score .value {
+            color: #e94560;
+        }
+
+        /* ===== Область выбора ===== */
+        .choices-area {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        /* ===== Кнопки выбора ===== */
+        .choice-btn {
+            padding: 20px 35px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border: 2px solid #0f3460;
+            border-radius: 12px;
+            background-color: #16213e;
+            color: #e0e0e0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 180px;
+            text-align: center;
+        }
+
+        .choice-btn:hover {
+            background-color: #0f3460;
+            border-color: #e94560;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(233, 69, 96, 0.3);
+        }
+
+        .choice-btn:active {
+            transform: translateY(0);
+        }
+
+        .choice-btn .icon {
+            display: block;
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+        }
+
+        /* ===== Область результата раунда ===== */
+        .round-result {
+            margin-bottom: 20px;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .choices-display {
+            display: flex;
+            gap: 50px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .choice-show {
+            text-align: center;
+        }
+
+        .choice-show .icon {
+            font-size: 3rem;
+            margin-bottom: 5px;
+        }
+
+        .choice-show .name {
+            font-size: 1rem;
+            color: #a0a0b0;
+        }
+
+        .vs {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #e94560;
+        }
+
+        .result-text {
+            font-size: 1.6rem;
+            font-weight: bold;
+            padding: 10px 30px;
+            border-radius: 8px;
+        }
+
+        .result-win {
+            color: #4ecca3;
+        }
+
+        .result-lose {
+            color: #e94560;
+        }
+
+        .result-draw {
+            color: #f5c542;
+        }
+
+        /* ===== Кнопка сброса ===== */
+        .reset-btn {
+            margin-top: 20px;
+            padding: 12px 30px;
+            font-size: 1rem;
+            border: 1px solid #a0a0b0;
+            border-radius: 8px;
+            background-color: transparent;
+            color: #a0a0b0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .reset-btn:hover {
+            border-color: #e94560;
+            color: #e94560;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Заголовок приложения -->
+    <h1>Камень, Ножницы, Бумага</h1>
+
+    <!-- Счётчик очков -->
+    <div class="scoreboard">
+        <div class="score-item player-score">
+            <div class="label">Вы</div>
+            <div class="value" id="playerScore">0</div>
+        </div>
+        <div class="score-item computer-score">
+            <div class="label">Компьютер</div>
+            <div class="value" id="computerScore">0</div>
+        </div>
+    </div>
+
+    <!-- Область отображения выбора и результата -->
+    <div class="round-result">
+        <div class="choices-display" id="choicesDisplay">
+            <div class="choice-show">
+                <div class="icon" id="playerIcon">❓</div>
+                <div class="name">Вы</div>
+            </div>
+            <div class="vs">VS</div>
+            <div class="choice-show">
+                <div class="icon" id="computerIcon">❓</div>
+                <div class="name">Компьютер</div>
+            </div>
+        </div>
+        <div class="result-text" id="resultText">Сделайте ваш выбор!</div>
+    </div>
+
+    <!-- Кнопки выбора игрока -->
+    <div class="choices-area">
+        <button class="choice-btn" onclick="play('камень')">
+            <span class="icon">🪨</span>
+            Камень
+        </button>
+        <button class="choice-btn" onclick="play('ножницы')">
+            <span class="icon">✂️</span>
+            Ножницы
+        </button>
+        <button class="choice-btn" onclick="play('бумага')">
+            <span class="icon">📄</span>
+            Бумага
+        </button>
+    </div>
+
+    <!-- Кнопка сброса счёта -->
+    <button class="reset-btn" onclick="resetScore()">Сбросить счёт</button>
+
+    <script>
+        // ===== Состояние игры =====
+        let playerScore = 0;
+        let computerScore = 0;
+
+        // Карта иконок для вариантов
+        const icons = {
+            'камень': '🪨',
+            'ножницы': '✂️',
+            'бумага': '📄'
+        };
+
+        // Список всех вариантов
+        const choices = ['камень', 'ножницы', 'бумага'];
+
+        /**
+         * Основной ход игры
+         * @param {string} playerChoice - выбор игрока ('камень', 'ножницы', 'бумага')
+         */
+        function play(playerChoice) {
+            // Компьютер делает случайный выбор
+            const computerChoice = choices[Math.floor(Math.random() * choices.length)];
+
+            // Обновляем иконки выбора
+            document.getElementById('playerIcon').textContent = icons[playerChoice];
+            document.getElementById('computerIcon').textContent = icons[computerChoice];
+
+            // Определяем результат раунда
+            const result = determineWinner(playerChoice, computerChoice);
+
+            // Обновляем счёт и отображаем результат
+            updateScore(result);
+            displayResult(result, playerChoice, computerChoice);
+        }
+
+        /**
+         * Определяет победителя раунда
+         * @param {string} player - выбор игрока
+         * @param {string} computer - выбор компьютера
+         * @returns {string} результат: 'win', 'lose', 'draw'
+         */
+        function determineWinner(player, computer) {
+            // Ничья — одинаковый выбор
+            if (player === computer) {
+                return 'draw';
+            }
+
+            // Камень > ножницы
+            if (player === 'камень' && computer === 'ножницы') {
+                return 'win';
+            }
+
+            // Ножницы > бумага
+            if (player === 'ножницы' && computer === 'бумага') {
+                return 'win';
+            }
+
+            // Бумага > камень
+            if (player === 'бумага' && computer === 'камень') {
+                return 'win';
+            }
+
+            // В остальных случаях проигрыш
+            return 'lose';
+        }
+
+        /**
+         * Обновляет счётчик очков
+         * @param {string} result - результат раунда
+         */
+        function updateScore(result) {
+            if (result === 'win') {
+                playerScore++;
+            } else if (result === 'lose') {
+                computerScore++;
+            }
+
+            document.getElementById('playerScore').textContent = playerScore;
+            document.getElementById('computerScore').textContent = computerScore;
+        }
+
+        /**
+         * Отображает результат раунда на экране
+         * @param {string} result - результат раунда
+         * @param {string} playerChoice - выбор игрока
+         * @param {string} computerChoice - выбор компьютера
+         */
+        function displayResult(result, playerChoice, computerChoice) {
+            const resultText = document.getElementById('resultText');
+
+            const messages = {
+                'win': `Вы победили! ${capitalize(playerChoice)} бьёт ${capitalize(computerChoice)}.`,
+                'lose': `Компьютер победил! ${capitalize(computerChoice)} бьёт ${capitalize(playerChoice)}.`,
+                'draw': 'Ничья! Одинаковый выбор.'
+            };
+
+            resultText.textContent = messages[result];
+
+            // Убираем все классы цветов и добавляем нужный
+            resultText.className = 'result-text';
+            resultText.classList.add(result === 'win' ? 'result-win' : result === 'lose' ? 'result-lose' : 'result-draw');
+        }
+
+        /**
+         * Сбрасывает счёт до нуля
+         */
+        function resetScore() {
+            playerScore = 0;
+            computerScore = 0;
+
+            document.getElementById('playerScore').textContent = '0';
+            document.getElementById('computerScore').textContent = '0';
+            document.getElementById('playerIcon').textContent = '❓';
+            document.getElementById('computerIcon').textContent = '❓';
+
+            const resultText = document.getElementById('resultText');
+            resultText.textContent = 'Сделайте ваш выбор!';
+            resultText.className = 'result-text';
+        }
+
+        // Вспомогательная функция: делает первую букву заглавной
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+    </script>
+</body>
+</html>
